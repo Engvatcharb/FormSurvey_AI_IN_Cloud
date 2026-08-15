@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI-in-Cloud Trust Policy Adoption — Questionnaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0b1929;--blue:#1a3f6f;--mid:#1d5fa8;--accent:#3b9ede;--sky:#e8f3fb;
+  --gold:#b8861a;--gold-lt:#fdf3dc;
+  --green:#16724a;--green-lt:#e8f7ef;
+  --red:#c0392b;--red-lt:#fdecea;
+  --white:#fff;--pale:#f5f8fd;--border:#d0dff0;
+  --text:#18283d;--muted:#6b7a92;
+  --r:10px;--rlg:16px;
+  --sh:0 2px 18px rgba(11,25,41,.09);
+  --sh-lg:0 8px 40px rgba(11,25,41,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--pale);color:var(--text);min-height:100vh}
+.th{font-family:'Sarabun',sans-serif}
+
+/* ══ PAGES ══ */
+.page{display:none;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ══ STICKY LANG BAR ══ */
+.lang-bar{
+  position:sticky;top:0;z-index:200;
+  background:var(--navy);
+  padding:9px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.lang-bar-left{display:flex;align-items:center;gap:10px}
+.lang-bar-title{color:rgba(255,255,255,.5);font-size:11px;font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase}
+.lbtn{padding:5px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,.28);background:transparent;color:rgba(255,255,255,.65);font-size:12.5px;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif}
+.lbtn.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.lbtn:hover:not(.on){border-color:rgba(255,255,255,.55);color:#fff}
+.prog-mini{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace}
+.prog-mini-bar{width:80px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.prog-mini-fill{height:100%;background:var(--accent);border-radius:2px;width:0;transition:width .4s}
+
+/* ══ HERO BAND ══ */
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,#163360 55%,#1a4a8a 100%);
+  padding:48px 24px 40px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.018'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,158,222,.18);border:1px solid rgba(59,158,222,.38);color:#7fc8f0;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:20px;position:relative;z-index:1}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(19px,3.2vw,30px);font-weight:700;color:#fff;line-height:1.28;max-width:760px;margin:0 auto 10px;position:relative;z-index:1}
+.hero h2{font-family:'Sarabun',sans-serif;font-size:clamp(15px,2.4vw,21px);font-weight:400;color:rgba(255,255,255,.65);line-height:1.45;max-width:680px;margin:0 auto 26px;position:relative;z-index:1}
+.hero-chips{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;position:relative;z-index:1}
+.chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.82);font-size:11.5px;padding:4px 13px;border-radius:6px;font-family:'DM Mono',monospace}
+
+/* ══ WRAP ══ */
+.wrap{max-width:820px;margin:0 auto;padding:0 18px}
+
+/* ══ CONSENT PAGE ══ */
+.consent-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rlg);box-shadow:var(--sh-lg);margin:28px auto;max-width:820px;overflow:hidden}
+.consent-sec{padding:28px 32px;border-bottom:1px solid #eef3fb}
+.consent-sec:last-child{border-bottom:none}
+.consent-sec h3{font-size:17px;font-weight:600;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.consent-sec h3 .ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.consent-sec p,.consent-sec li{font-size:16px;line-height:1.75;color:#444}
+.consent-sec ul{padding-left:20px;display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.consent-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.consent-item{background:var(--pale);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px}
+.consent-item .ci-label{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.consent-item .ci-val{font-size:15px;color:var(--text);line-height:1.5}
+.agree-box{padding:24px 32px;background:var(--gold-lt);border-top:2px solid #e8c96a}
+.agree-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-bottom:18px}
+.agree-check input[type=checkbox]{width:20px;height:20px;cursor:pointer;flex-shrink:0;margin-top:2px;accent-color:var(--mid)}
+.agree-check span{font-size:13.5px;line-height:1.65;color:var(--text)}
+.btn-start{width:100%;padding:17px;background:linear-gradient(135deg,var(--navy),var(--mid));color:#fff;font-size:18px;font-weight:600;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.3px;opacity:.45;pointer-events:none}
+.btn-start.ready{opacity:1;pointer-events:all}
+.btn-start.ready:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(29,95,168,.35)}
+.consent-radio-group{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.consent-radio-opt{display:flex;align-items:flex-start;gap:13px;padding:14px 18px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .18s;background:var(--white)}
+.consent-radio-opt:hover{border-color:var(--mid);background:var(--sky)}
+.consent-radio-opt.selected-agree{border-color:var(--green);background:var(--green-lt)}
+.consent-radio-opt.selected-decline{border-color:var(--red);background:var(--red-lt)}
+.consent-radio-opt input[type=radio]{width:18px;height:18px;cursor:pointer;flex-shrink:0;margin-top:2px;accent-color:var(--mid)}
+.consent-radio-opt span{font-size:16px;line-height:1.65;color:var(--text)}
+.decline-msg{display:none;background:var(--red-lt);border:1px solid #f5b7b1;border-radius:10px;padding:16px 20px;margin-top:4px;font-size:15.5px;line-height:1.65;color:#7b241c}
+.decline-msg.show{display:block}
+
+/* ══ PROGRESS ══ */
+.prog-wrap{max-width:820px;margin:22px auto 0;padding:0 18px}
+.prog-hdr{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:7px;font-family:'DM Mono',monospace}
+.prog-bar{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--mid),var(--accent));border-radius:4px;width:0;transition:width .4s}
+
+/* ══ INSTR BOX ══ */
+.instr-box{max-width:820px;margin:18px auto 0;padding:0 18px}
+.instr-inner{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:var(--r);padding:20px 24px;font-size:16px;line-height:1.7;color:#444}
+.scale-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.sc{display:flex;align-items:center;gap:6px;background:var(--pale);border:1px solid var(--border);border-radius:7px;padding:7px 14px;font-size:14px}
+.sc-n{width:26px;height:26px;border-radius:50%;border:2px solid var(--mid);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--mid);background:#fff;flex-shrink:0}
+
+/* ══ SECTION CARD ══ */
+.sec-card{background:var(--white);border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);margin-bottom:22px;overflow:hidden;transition:box-shadow .2s}
+.sec-card:hover{box-shadow:var(--sh-lg)}
+.sec-hdr{background:linear-gradient(90deg,var(--navy) 0%,var(--blue) 100%);padding:15px 22px;display:flex;align-items:center;gap:13px}
+.sec-num{width:32px;height:32px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:#fff;flex-shrink:0;font-weight:500}
+.sec-name{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;color:#fff;line-height:1.2}
+.sec-code{font-family:'DM Mono',monospace;font-size:13px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:2px}
+.sec-cnt{margin-left:auto;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.72);font-size:13px;padding:3px 11px;border-radius:12px;font-family:'DM Mono',monospace;white-space:nowrap}
+
+/* ══ QUESTION ROW ══ */
+.q-row{padding:16px 22px;border-bottom:1px solid #edf1f8;transition:background .14s}
+.q-row:last-child{border-bottom:none}
+.q-row:hover{background:#fafcff}
+.q-row.answered{background:#f4fbf7}
+.q-row.error .q-txt{color:var(--red)}
+.q-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.q-id{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:#fff;background:var(--mid);padding:3px 8px;border-radius:5px;white-space:nowrap;flex-shrink:0;margin-top:2px;transition:background .2s}
+.q-row.answered .q-id{background:var(--green)}
+.q-row.error .q-id{background:var(--red)}
+.q-txt{font-size:17px;line-height:1.68;color:var(--text)}
+.lkrt-lbls{display:flex;justify-content:space-between;font-size:15px;color:var(--muted);font-style:italic;margin-bottom:7px}
+.lkrt{display:flex;gap:5px}
+.lk{flex:1}
+.lk input{display:none}
+.lk label{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:12px 4px;border:1.5px solid var(--border);border-radius:8px;background:var(--pale);transition:all .15s;font-size:20px;color:var(--muted);font-family:'DM Mono',monospace;font-weight:500;width:100%;text-align:center;user-select:none}
+.lk label:hover{border-color:var(--accent);background:var(--sky);color:var(--blue)}
+.lk input:checked+label{border-color:var(--mid);background:var(--mid);color:#fff;box-shadow:0 2px 8px rgba(29,95,168,.28)}
+.lk-desc{font-size:13px;line-height:1.3;font-family:'DM Sans','Sarabun',sans-serif;font-weight:400;margin-top:4px}
+.lang-en .lk-desc{font-size:15.5px;line-height:1.25;font-weight:500}
+.lang-en .lkrt-lbls{font-size:17px}
+.lang-en .lk label{font-size:22px;padding:14px 4px}
+.lang-th .lk-desc{font-size:15px;line-height:1.35;font-weight:500;font-family:'Sarabun',sans-serif}
+.lang-th .lkrt-lbls{font-size:16px;font-family:'Sarabun',sans-serif}
+.lang-th .lk label{font-size:21px;padding:14px 4px;font-family:'DM Mono',monospace}
+.err-msg{font-size:14px;color:var(--red);margin-top:7px;display:none;font-style:italic}
+.q-row.error .err-msg{display:block}
+
+/* ══ DEMOGRAPHICS ══ */
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:20px 22px}
+@media(max-width:540px){.demo-grid{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld.full{grid-column:1/-1}
+.fld label{font-size:15px;font-weight:600;color:var(--navy)}
+.sw{position:relative}
+.sw::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:16px}
+.sw select,.fld input{padding:12px 16px;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans','Sarabun',sans-serif;font-size:16px;color:var(--text);background:var(--pale);outline:none;transition:border-color .15s;appearance:none;width:100%}
+.sw select:focus,.fld input:focus{border-color:var(--accent);background:#fff}
+
+/* ══ SUBMIT ══ */
+.sub-area{max-width:820px;margin:10px auto 0;padding:0 18px 60px;text-align:center}
+.sub-note{font-size:15px;color:var(--muted);margin-bottom:14px;line-height:1.65}
+.btn-sub{background:linear-gradient(135deg,var(--navy),var(--mid));color:#fff;font-size:18px;font-weight:600;padding:15px 52px;border:none;border-radius:10px;cursor:pointer;box-shadow:0 4px 18px rgba(11,25,41,.22);transition:all .2s;letter-spacing:.3px;font-family:'DM Sans',sans-serif}
+.btn-sub:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(11,25,41,.3)}
+
+/* ══ DASHBOARD ══ */
+.dash-wrap{max-width:900px;margin:0 auto;padding:24px 18px 60px}
+.dash-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.dash-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--navy)}
+.btn-exp{background:var(--green);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-left:8px}
+.btn-exp:hover{background:#115a39}
+.btn-clr{background:var(--mid);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-clr:hover{background:var(--blue)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:22px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center;box-shadow:var(--sh)}
+.stat-num{font-size:30px;font-weight:700;color:var(--mid);font-family:'Playfair Display',serif}
+.stat-lbl{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh);margin-bottom:18px}
+.chart-card h3{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:14px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+@media(max-width:600px){.chart-grid{grid-template-columns:1fr}}
+.ch-wrap{position:relative;height:200px}
+.ch-wrap-lg{position:relative;height:260px}
+.rtbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:22px}
+.rtbl-title{padding:13px 18px;font-size:13px;font-weight:600;color:var(--navy);border-bottom:1px solid var(--border);background:var(--pale)}
+.rtbl{width:100%;border-collapse:collapse;font-size:12px}
+.rtbl th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-weight:500}
+.rtbl td{padding:8px 12px;border-bottom:1px solid #eef2f8;color:var(--text)}
+.rtbl tr:last-child td{border-bottom:none}
+.rtbl tr:hover td{background:var(--pale)}
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:500}
+.badge-th{background:#fff3e0;color:#a05000}
+.badge-en{background:#e3f2fd;color:#0d47a1}
+.no-data{text-align:center;padding:48px 20px;color:var(--muted);font-style:italic;font-size:13px}
+
+/* ══ TAB NAV ══ */
+.tab-nav{display:flex;background:var(--white);border-bottom:2px solid var(--border);position:sticky;top:44px;z-index:150}
+#t-dash{display:none}
+#t-dash.owner-visible{display:flex}
+.owner-login-overlay{display:none;position:fixed;inset:0;background:rgba(11,25,41,.75);backdrop-filter:blur(5px);z-index:998;align-items:center;justify-content:center;padding:20px}
+.owner-login-overlay.show{display:flex}
+.owner-modal{background:#fff;border-radius:16px;padding:36px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:popIn .28s ease}
+.owner-modal h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);margin-bottom:6px}
+.owner-modal p{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6}
+.owner-input{width:100%;padding:13px 16px;border:2px solid var(--border);border-radius:10px;font-size:16px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;text-align:center;letter-spacing:3px;margin-bottom:12px;transition:border-color .2s}
+.owner-input:focus{border-color:var(--mid)}
+.owner-input.error{border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.owner-err{font-size:13px;color:var(--red);margin-bottom:14px;min-height:18px}
+.btn-owner-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--navy),var(--mid));color:#fff;font-size:15px;font-weight:600;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;margin-bottom:10px}
+.btn-owner-login:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(29,95,168,.3)}
+.btn-owner-cancel{width:100%;padding:10px;background:transparent;color:var(--muted);font-size:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-owner-cancel:hover{color:var(--navy)}
+.owner-badge{position:fixed;bottom:18px;right:18px;background:var(--navy);color:#fff;border:none;padding:9px 16px;border-radius:20px;font-size:12px;font-family:'DM Mono',monospace;cursor:pointer;z-index:500;opacity:.55;transition:opacity .2s;letter-spacing:.5px}
+.owner-badge:hover{opacity:1}
+.owner-badge.logged-in{background:var(--green);opacity:.8}
+.tab-btn{flex:1;padding:14px 8px;text-align:center;font-size:15px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.tab-btn.on{color:var(--mid);border-bottom-color:var(--mid);font-weight:600}
+
+/* ══ SUCCESS OVERLAY ══ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(11,25,41,.72);backdrop-filter:blur(4px);z-index:999;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:18px;padding:44px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.28);animation:popIn .3s ease}
+@keyframes popIn{from{transform:scale(.86);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-ico{width:62px;height:62px;background:var(--green-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.modal h2{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);margin-bottom:10px}
+.modal p{font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:22px}
+.btn-modal{background:var(--navy);color:#fff;border:none;padding:13px 36px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.btn-modal:hover{background:var(--blue)}
+
+@media(max-width:580px){
+  .hero{padding:32px 16px 28px}
+  .sec-hdr{padding:13px 16px}
+  .q-row{padding:14px 16px}
+  .q-txt{font-size:16px}
+  .lkrt{gap:3px}
+  .lk label{font-size:17px;padding:10px 3px}
+  .lk-desc{font-size:12px}
+  .consent-sec{padding:20px 18px}
+  .agree-box{padding:18px}
+  .demo-grid{padding:16px}
+  .consent-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body class="lang-th">
+
+<!-- ══ LANG BAR ══ -->
+<div class="lang-bar">
+  <div class="lang-bar-left">
+    <span class="lang-bar-title">Language</span>
+    <button class="lbtn on" onclick="setLang('th')">🇹🇭 ไทย</button>
+    <button class="lbtn" onclick="setLang('en')">🇬🇧 English</button>
+  </div>
+  <div class="prog-mini" id="prog-mini" style="display:none">
+    <div class="prog-mini-bar"><div class="prog-mini-fill" id="pmf"></div></div>
+    <span id="pmtxt">0/50</span>
+  </div>
+</div>
+
+<!-- ══ TAB NAV ══ -->
+<div class="tab-nav">
+  <button class="tab-btn on" onclick="goTab('consent')" id="t-consent"><span data-th="📋 ยินยอม" data-en="📋 Consent"></span></button>
+  <button class="tab-btn" onclick="goTab('form')" id="t-form"><span data-th="📝 แบบสอบถาม" data-en="📝 Questionnaire"></span></button>
+  <button class="tab-btn" onclick="goTab('dash')" id="t-dash" style="display:none"><span data-th="📊 Dashboard" data-en="📊 Dashboard"></span></button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1: CONSENT
+══════════════════════════════════════════ -->
+<div class="page active" id="page-consent">
+
+<div class="hero">
+  <div class="hero-badge">📋 <span data-th="แบบสอบถามวิจัย · ระดับปริญญาเอก" data-en="Research Questionnaire · PhD Study"></span></div>
+  <h1 data-th="การสร้างนโยบายความไว้วางใจในการใช้ AI ในคลาวด์เพื่อการเปลี่ยนแปลงดิจิทัลในภาคโทรคมนาคมในประเทศไทย"
+      data-en="Building AI-in-Cloud Trust Policy Adoption for Digital Transformation in Telecom Sectors in Thailand"></h1>
+  <h2 data-th="Building AI-in-Cloud Trust Policy Adoption for Digital Transformation in Telecom Sectors in Thailand"
+      data-en="การสร้างนโยบายความไว้วางใจในการใช้ AI ในคลาวด์เพื่อการเปลี่ยนแปลงดิจิทัลในภาคโทรคมนาคมในประเทศไทย"></h2>
+  <div class="hero-chips">
+    <span class="chip" data-th="⏱ ประมาณ 20–25 นาที" data-en="⏱ Est. 20–25 min"></span>
+    <span class="chip" data-th="📋 85 ข้อ" data-en="📋 85 items"></span>
+    <span class="chip" data-th="🔒 ไม่ระบุชื่อ" data-en="🔒 Anonymous"></span>
+    <span class="chip" data-th="🏢 ภาคโทรคมนาคม" data-en="🏢 Telecom Sector"></span>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="consent-card">
+
+  <!-- HEADER LABEL -->
+  <div class="consent-sec" style="background:var(--pale);padding:18px 32px 14px">
+    <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px"
+         data-th="เอกสารข้อมูลและแบบยินยอมของผู้เข้าร่วมการวิจัย"
+         data-en="Participant Information and Consent Form"></div>
+    <div style="font-size:15px;font-weight:600;color:var(--navy);line-height:1.4"
+         data-th="การสร้างนโยบายความไว้วางใจในการใช้ AI ในคลาวด์เพื่อการเปลี่ยนแปลงดิจิทัลในภาคโทรคมนาคมในประเทศไทย"
+         data-en="Building AI-in-Cloud Trust Policy Adoption for Digital Transformation in Telecom Sectors in Thailand"></div>
+  </div>
+
+  <!-- RESEARCHER -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#e8f0fb;color:#1d5fa8">👩‍🔬</span>
+      <span data-th="นักวิจัย" data-en="Researcher"></span></h3>
+    <div class="consent-grid">
+      <div class="consent-item">
+        <div class="ci-label" data-th="ชื่อนักวิจัย" data-en="Name"></div>
+        <div class="ci-val">Mrs. Thitaree Porameesanaporn<br>
+          <span style="font-size:12px;color:var(--muted)"
+                data-th="นักศึกษาปริญญาเอก สาขาการจัดการเทคโนโลยีสารสนเทศ"
+                data-en="Doctoral Candidate, Ph.D. Program in Information Technology Management"></span></div>
+      </div>
+      <div class="consent-item">
+        <div class="ci-label" data-th="สถาบัน" data-en="Institution"></div>
+        <div class="ci-val"
+             data-th="คณะวิศวกรรมศาสตร์ มหาวิทยาลัยมหิดล"
+             data-en="Faculty of Engineering, Mahidol University"></div>
+      </div>
+      <div class="consent-item">
+        <div class="ci-label" data-th="อีเมล" data-en="Email"></div>
+        <div class="ci-val"><a href="mailto:thitaree.poa@student.mahidol.ac.th"
+          style="color:var(--mid);font-size:13px">thitaree.poa@student.mahidol.ac.th</a></div>
+      </div>
+      <div class="consent-item">
+        <div class="ci-label" data-th="โทรศัพท์" data-en="Telephone"></div>
+        <div class="ci-val">081-905-5125</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURPOSE -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#e8f0fb;color:#1d5fa8">📌</span>
+      <span data-th="วัตถุประสงค์ของการวิจัย" data-en="Purpose of the Study"></span></h3>
+    <p data-th="การวิจัยนี้มีวัตถุประสงค์เพื่อศึกษาปัจจัยที่มีอิทธิพลต่อการรับเอา AI-in-Cloud ในอุตสาหกรรมโทรคมนาคมในประเทศไทย ผลการวิจัยจะนำไปใช้เพื่อวัตถุประสงค์ทางวิชาการ และอาจช่วยปรับปรุงกลยุทธ์องค์กรที่เกี่ยวข้องกับการรับเอา Artificial Intelligence (AI) และ Cloud Computing"
+       data-en="This research aims to investigate the factors influencing AI-in-Cloud adoption in the telecommunications industry in Thailand. The results will be used for academic research and may help improve organizational strategies related to Artificial Intelligence (AI) and Cloud Computing adoption."></p>
+  </div>
+
+  <!-- PARTICIPATION -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#e8f7ef;color:#16724a">🙋</span>
+      <span data-th="การมีส่วนร่วม" data-en="Participation"></span></h3>
+    <ul>
+      <li data-th="ท่านได้รับเชิญให้เข้าร่วมเนื่องจากงานของท่านเกี่ยวข้องกับ AI, Cloud Computing, กลยุทธ์ IT, การเปลี่ยนแปลงดิจิทัล หรือการจัดการเทคโนโลยี"
+          data-en="You are invited to participate because your work is related to AI, Cloud Computing, IT Strategy, Digital Transformation, or technology management."></li>
+      <li data-th="การมีส่วนร่วมประกอบด้วยการกรอกแบบสอบถามออนไลน์ ซึ่งใช้เวลาประมาณ 15–20 นาที"
+          data-en="Participation involves completing an online questionnaire, which will take approximately 15–20 minutes."></li>
+    </ul>
+  </div>
+
+  <!-- VOLUNTARY -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#fdf3dc;color:#b8861a">🤝</span>
+      <span data-th="การเข้าร่วมโดยสมัครใจ" data-en="Voluntary Participation"></span></h3>
+    <ul>
+      <li data-th="การมีส่วนร่วมของท่านเป็นไปโดยสมัครใจอย่างสมบูรณ์"
+          data-en="Your participation is entirely voluntary."></li>
+      <li data-th="ท่านสามารถเลือกที่จะไม่เข้าร่วม หรือหยุดกรอกแบบสอบถามได้ตลอดเวลาก่อนการส่ง โดยไม่มีบทลงโทษหรือผลกระทบเชิงลบใดๆ"
+          data-en="You may choose not to participate or stop completing the questionnaire at any time before submission without any penalty or negative consequences."></li>
+    </ul>
+  </div>
+
+  <!-- RISKS & BENEFITS -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#fdecea;color:#c0392b">⚖️</span>
+      <span data-th="ความเสี่ยงและประโยชน์" data-en="Risks and Benefits"></span></h3>
+    <ul>
+      <li data-th="การศึกษานี้มีความเสี่ยงน้อยที่สุด และไม่รวมถึงการดำเนินการทางการแพทย์ การรักษา หรือการแทรกแซงใดๆ"
+          data-en="This study involves minimal risk and does not include any medical procedures, treatments, or interventions."></li>
+      <li data-th="แม้ว่าอาจไม่มีประโยชน์ส่วนบุคคลโดยตรง แต่การมีส่วนร่วมของท่านจะมีส่วนช่วยในงานวิจัยที่อาจช่วยให้องค์กรเข้าใจการรับเอา AI-in-Cloud ได้ดีขึ้น"
+          data-en="Although there may be no direct personal benefit, your participation will contribute to research that may help organizations better understand AI-in-Cloud adoption."></li>
+    </ul>
+  </div>
+
+  <!-- CONFIDENTIALITY -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#f0e8fb;color:#6a1baa">🔒</span>
+      <span data-th="การรักษาความลับ" data-en="Confidentiality"></span></h3>
+    <ul>
+      <li data-th="แบบสอบถามไม่มีการเก็บรวบรวมข้อมูลส่วนบุคคลที่สามารถระบุตัวตนได้โดยตรง เช่น ชื่อ รหัสพนักงาน เลขประจำตัวประชาชน หรือข้อมูลติดต่อส่วนบุคคล"
+          data-en="The questionnaire does not collect directly identifiable personal information such as your name, employee ID, national identification number, or personal contact details."></li>
+      <li data-th="คำตอบทั้งหมดจะถูกเก็บรักษาเป็นความลับ และรายงานในรูปแบบรวมเพื่อวัตถุประสงค์การวิจัยเท่านั้น"
+          data-en="All responses will be kept confidential and reported only in aggregated form for research purposes."></li>
+    </ul>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="consent-sec">
+    <h3><span class="ico" style="background:#e8f0fb;color:#1d5fa8">📞</span>
+      <span data-th="ข้อมูลติดต่อ" data-en="Contact Information"></span></h3>
+    <p style="font-size:13.5px;line-height:1.8;color:#444"
+       data-th="หากท่านมีคำถามเกี่ยวกับการวิจัยนี้ กรุณาติดต่อ:"
+       data-en="If you have questions about this research, please contact:"></p>
+    <div style="margin-top:10px;padding:14px 18px;background:var(--pale);border-radius:10px;border:1px solid var(--border)">
+      <div style="font-weight:600;color:var(--navy);font-size:13.5px;margin-bottom:6px">Mrs. Thitaree Porameesanaporn</div>
+      <div style="font-size:13px;color:#444;line-height:1.9"
+           data-th="คณะวิศวกรรมศาสตร์ มหาวิทยาลัยมหิดล"
+           data-en="Faculty of Engineering, Mahidol University"></div>
+      <div style="font-size:13px;color:#444">
+        Email: <a href="mailto:thitaree.poa@student.mahidol.ac.th" style="color:var(--mid)">thitaree.poa@student.mahidol.ac.th</a>
+      </div>
+      <div style="font-size:13px;color:#444"
+           data-th="โทรศัพท์: 081-905-5125"
+           data-en="Telephone: 081-905-5125"></div>
+    </div>
+  </div>
+
+  <!-- CONSENT RADIO -->
+  <div class="agree-box">
+    <div style="font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:14px"
+         data-th="กรุณาเลือกหนึ่งตัวเลือกด้านล่าง:" data-en="Please select one option below:"></div>
+
+    <div class="consent-radio-group">
+
+      <label class="consent-radio-opt" id="opt-agree" onclick="selectConsent('agree')">
+        <input type="radio" name="consent_choice" id="radio-agree" value="agree">
+        <span data-th="ข้าพเจ้าได้อ่านและเข้าใจข้อมูลข้างต้นแล้ว และยินยอมเข้าร่วมการวิจัยนี้โดยสมัครใจ"
+              data-en="I have read and understood the information above and voluntarily agree to participate in this research study."></span>
+      </label>
+
+      <label class="consent-radio-opt" id="opt-decline" onclick="selectConsent('decline')">
+        <input type="radio" name="consent_choice" id="radio-decline" value="decline">
+        <span data-th="ข้าพเจ้าไม่ยินยอมเข้าร่วมการวิจัยนี้"
+              data-en="I do not agree to participate in this research study."></span>
+      </label>
+
+    </div>
+
+    <!-- Decline message -->
+    <div class="decline-msg" id="decline-msg">
+      <strong data-th="ขอบคุณสำหรับเวลาของท่าน" data-en="Thank you for your time."></strong><br>
+      <span data-th="ท่านได้เลือกที่จะไม่เข้าร่วมการวิจัยนี้ ท่านสามารถปิดหน้าต่างนี้ได้เลย หากท่านเปลี่ยนใจ สามารถเลือกยินยอมด้านบนได้ตลอดเวลา"
+            data-en="You have chosen not to participate in this research. You may close this window. If you change your mind, you may select the agree option above at any time."></span>
+    </div>
+
+    <button class="btn-start" id="btn-start" onclick="startForm()"
+            data-th="เริ่มทำแบบสอบถาม →" data-en="Start Questionnaire →"
+            style="margin-top:18px">เริ่มทำแบบสอบถาม →</button>
+  </div>
+
+</div><!-- /consent-card -->
+</div><!-- /wrap -->
+</div><!-- /page-consent -->
+
+<!-- ══════════════════════════════════════════
+     PAGE 2: QUESTIONNAIRE FORM
+══════════════════════════════════════════ -->
+<div class="page" id="page-form">
+
+<div class="hero">
+  <div class="hero-badge">📝 <span data-th="แบบสอบถาม" data-en="Questionnaire"></span></div>
+  <h1 data-th="การสร้างนโยบายความไว้วางใจในการใช้ AI ในคลาวด์เพื่อการเปลี่ยนแปลงดิจิทัลในภาคโทรคมนาคมในประเทศไทย"
+      data-en="Building AI-in-Cloud Trust Policy Adoption for Digital Transformation in Telecom Sectors in Thailand"></h1>
+  <div class="hero-chips">
+    <span class="chip" data-th="⏱ ประมาณ 12–15 นาที" data-en="⏱ Est. 12–15 min"></span>
+    <span class="chip" data-th="📋 85 ข้อ" data-en="📋 85 items"></span>
+    <span class="chip" data-th="📊 Likert 1–5" data-en="📊 Likert 1–5"></span>
+  </div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-hdr">
+    <span data-th="ความคืบหน้า" data-en="Progress"></span>
+    <span id="prog-lbl">0 / 85</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<div class="instr-box">
+  <div class="instr-inner">
+    <span data-th="<strong>คำชี้แจง:</strong> กรุณาประเมินแต่ละข้อความตามสถานการณ์ปัจจุบันขององค์กร ไม่มีคำตอบที่ถูกหรือผิด"
+          data-en="<strong>Instructions:</strong> Please rate each statement based on your organization's current situation. There are no right or wrong answers."></span>
+    <div class="scale-row">
+      <div class="sc"><div class="sc-n">1</div><span data-th="ไม่เห็นด้วยอย่างยิ่ง" data-en="Strongly Disagree"></span></div>
+      <div class="sc"><div class="sc-n">2</div><span data-th="ไม่เห็นด้วย" data-en="Disagree"></span></div>
+      <div class="sc"><div class="sc-n">3</div><span data-th="เป็นกลาง" data-en="Neutral"></span></div>
+      <div class="sc"><div class="sc-n">4</div><span data-th="เห็นด้วย" data-en="Agree"></span></div>
+      <div class="sc"><div class="sc-n">5</div><span data-th="เห็นด้วยอย่างยิ่ง" data-en="Strongly Agree"></span></div>
+    </div>
+  </div>
+</div>
+
+<form id="mainForm" novalidate>
+<div class="wrap" style="padding-top:20px;padding-bottom:0">
+
+  <!-- DEMOGRAPHICS -->
+  <div class="sec-card">
+    <div class="sec-hdr">
+      <div class="sec-num">A</div>
+      <div>
+        <div class="sec-name" data-th="ข้อมูลทั่วไป" data-en="General Information"></div>
+        <div class="sec-code">DEMOGRAPHIC PROFILE</div>
+      </div>
+    </div>
+    <div class="demo-grid">
+      <div class="fld"><label data-th="เพศ" data-en="Gender"></label><div class="sw"><select name="gender"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="male" data-th="ชาย" data-en="Male"></option><option value="female" data-th="หญิง" data-en="Female"></option><option value="other" data-th="ไม่ระบุ" data-en="Prefer not to say"></option></select></div></div>
+      <div class="fld"><label data-th="ช่วงอายุ" data-en="Age Range"></label><div class="sw"><select name="age"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="u30" data-th="ต่ำกว่า 30 ปี" data-en="Under 30"></option><option value="30-39" data-th="30–39 ปี" data-en="30–39"></option><option value="40-49" data-th="40–49 ปี" data-en="40–49"></option><option value="50-59" data-th="50–59 ปี" data-en="50–59"></option><option value="60+" data-th="60 ปีขึ้นไป" data-en="60+"></option></select></div></div>
+      <div class="fld"><label data-th="ระดับการศึกษาสูงสุด" data-en="Education Level"></label><div class="sw"><select name="education"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="bachelor" data-th="ปริญญาตรี" data-en="Bachelor's"></option><option value="master" data-th="ปริญญาโท" data-en="Master's"></option><option value="phd" data-th="ปริญญาเอก" data-en="Doctoral"></option><option value="other" data-th="อื่นๆ" data-en="Other"></option></select></div></div>
+      <div class="fld"><label data-th="ประสบการณ์บริหาร" data-en="Managerial Experience"></label><div class="sw"><select name="experience"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="lt1" data-th="น้อยกว่า 1 ปี" data-en="< 1 year"></option><option value="1-3" data-th="1–3 ปี" data-en="1–3 years"></option><option value="4-7" data-th="4–7 ปี" data-en="4–7 years"></option><option value="8-15" data-th="8–15 ปี" data-en="8–15 years"></option><option value="15+" data-th="มากกว่า 15 ปี" data-en="15+ years"></option></select></div></div>
+      <div class="fld full">
+        <label data-th="ระดับตำแหน่งปัจจุบัน" data-en="Current Position Level"></label>
+        <div class="sw">
+          <select name="position" id="pos-select" onchange="togglePosOther()">
+            <option value="" data-th="— เลือก —" data-en="— Select —"></option>
+            <option value="c_level" data-th="1. ผู้บริหารระดับสูง (CIO, CTO, CDO, CEO)" data-en="1. C-Level Executive (CIO, CTO, CDO, CEO)"></option>
+            <option value="vp_svp" data-th="2. รองประธาน / รองประธานอาวุโส" data-en="2. Vice President / Senior Vice President"></option>
+            <option value="director" data-th="3. ผู้อำนวยการ" data-en="3. Director"></option>
+            <option value="dept_head" data-th="4. หัวหน้าฝ่าย / หัวหน้าแผนก" data-en="4. Department Head"></option>
+            <option value="senior_mgr" data-th="5. ผู้จัดการอาวุโส" data-en="5. Senior Manager"></option>
+            <option value="manager" data-th="6. ผู้จัดการ" data-en="6. Manager"></option>
+            <option value="team_lead" data-th="7. หัวหน้าทีม / ผู้ควบคุมงาน" data-en="7. Team Lead / Supervisor"></option>
+            <option value="specialist" data-th="8. ผู้เชี่ยวชาญ / วิศวกร / นักวิเคราะห์" data-en="8. Specialist / Engineer / Analyst"></option>
+            <option value="consultant" data-th="9. ที่ปรึกษา" data-en="9. Consultant / Advisor"></option>
+            <option value="other" data-th="10. อื่นๆ (โปรดระบุ)" data-en="10. Other (Please specify)"></option>
+          </select>
+        </div>
+        <input type="text" id="pos-other-input" name="position_other"
+               style="display:none;margin-top:8px"
+               data-th="โปรดระบุตำแหน่ง..." data-en="Please specify your position...">
+      </div>
+      <div class="fld"><label data-th="ขนาดองค์กร (พนักงาน)" data-en="Company Size"></label><div class="sw"><select name="company_size"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="lt50">< 50</option><option value="50-199">50–199</option><option value="200-999">200–999</option><option value="1000-4999">1,000–4,999</option><option value="5000+">5,000+</option></select></div></div>
+      <div class="fld full"><label data-th="ประเภทองค์กรโทรคมนาคม" data-en="Telecom Organization Type"></label><div class="sw"><select name="telecom_type"><option value="" data-th="— เลือก —" data-en="— Select —"></option><option value="mobile" data-th="ผู้ให้บริการโทรศัพท์มือถือ" data-en="Mobile Network Operator (MNO)"></option><option value="fixed" data-th="ผู้ให้บริการโทรศัพท์พื้นฐาน / อินเทอร์เน็ต" data-en="Fixed-line / Internet Service Provider"></option><option value="satellite" data-th="ผู้ให้บริการดาวเทียม" data-en="Satellite Communication Provider"></option><option value="infra" data-th="ผู้ให้บริการโครงสร้างพื้นฐาน" data-en="Telecom Infrastructure Provider"></option><option value="cloud" data-th="ผู้ให้บริการ Cloud / Data Center" data-en="Cloud / Data Center Provider"></option><option value="other" data-th="อื่นๆ ในภาคโทรคมนาคม" data-en="Other Telecom-related"></option></select></div></div>
+    </div>
+  </div>
+
+  <!-- LIKERT SECTIONS (built by JS) -->
+  <div id="sec-AICW" class="sec-card"></div>
+<div id="sec-AICK" class="sec-card"></div>
+<div id="sec-TMS" class="sec-card"></div>
+<div id="sec-SA" class="sec-card"></div>
+<div id="sec-GOV" class="sec-card"></div>
+<div id="sec-CP" class="sec-card"></div>
+<div id="sec-PB" class="sec-card"></div>
+<div id="sec-PR" class="sec-card"></div>
+<div id="sec-TR" class="sec-card"></div>
+<div id="sec-AI" class="sec-card"></div>
+<div id="sec-CDR" class="sec-card"></div>
+<div id="sec-RS" class="sec-card"></div>
+<div id="sec-RB" class="sec-card"></div>
+<div id="sec-RL" class="sec-card"></div>
+<div id="sec-EXPLOR" class="sec-card"></div>
+<div id="sec-EXPLOI" class="sec-card"></div>
+<div id="sec-SVC" class="sec-card"></div>
+
+</div>
+
+<div class="sub-area">
+  <p class="sub-note" data-th="กรุณาตรวจสอบให้แน่ใจว่าตอบครบทุกข้อ ข้อมูลของท่านเป็นความลับและใช้เพื่อการวิจัยทางวิชาการเท่านั้น"
+     data-en="Please ensure all items are answered. Your responses are anonymous and used for academic research only."></p>
+  <button type="submit" class="btn-sub" data-th="ส่งแบบสอบถาม →" data-en="Submit Questionnaire →">ส่งแบบสอบถาม →</button>
+</div>
+</form>
+</div><!-- /page-form -->
+
+<!-- ══════════════════════════════════════════
+     PAGE 3: DASHBOARD
+══════════════════════════════════════════ -->
+<div class="page" id="page-dash">
+<div class="hero" style="padding:28px 24px 24px">
+  <div class="hero-badge">📊 <span data-th="สรุปผลข้อมูล" data-en="Data Summary"></span></div>
+  <h1 style="font-size:clamp(17px,2.5vw,24px)" data-th="Dashboard สรุปผลแบบสอบถาม" data-en="Questionnaire Results Dashboard"></h1>
+</div>
+
+<div class="dash-wrap">
+  <div class="dash-top">
+    <div class="dash-title" data-th="ผลการวิจัย" data-en="Research Results"></div>
+    <div>
+      <button class="btn-exp" onclick="exportExcel()" data-th="⬇ Excel" data-en="⬇ Excel">⬇ Excel</button>
+      <button class="btn-clr" onclick="clearData()" data-th="🗑 ล้างข้อมูล" data-en="🗑 Clear">🗑 ล้างข้อมูล</button>
+    </div>
+  </div>
+
+  <!-- Backend connection status -->
+  <div id="conn-banner" style="border-radius:10px;padding:12px 18px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"></div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-num" id="d-total">0</div><div class="stat-lbl" data-th="ผู้ตอบทั้งหมด" data-en="Total Responses"></div></div>
+    <div class="stat-card"><div class="stat-num" id="d-th">0</div><div class="stat-lbl" data-th="ตอบภาษาไทย" data-en="Thai Language"></div></div>
+    <div class="stat-card"><div class="stat-num" id="d-en">0</div><div class="stat-lbl" data-th="ตอบภาษาอังกฤษ" data-en="English Language"></div></div>
+    <div class="stat-card"><div class="stat-num" id="d-avg">—</div><div class="stat-lbl" data-th="คะแนนเฉลี่ยรวม" data-en="Overall Mean"></div></div>
+  </div>
+
+  <div class="chart-card">
+    <h3 data-th="คะแนนเฉลี่ยแยกตามตัวแปร (1–5)" data-en="Mean Score by Construct (Scale 1–5)"></h3>
+    <div class="ch-wrap-lg"><canvas id="ch-construct"></canvas></div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card"><h3 data-th="ระดับตำแหน่ง" data-en="Position Level"></h3><div class="ch-wrap"><canvas id="ch-pos"></canvas></div></div>
+    <div class="chart-card"><h3 data-th="ประเภทองค์กร" data-en="Telecom Type"></h3><div class="ch-wrap"><canvas id="ch-tel"></canvas></div></div>
+    <div class="chart-card"><h3 data-th="ช่วงอายุ" data-en="Age Range"></h3><div class="ch-wrap"><canvas id="ch-age"></canvas></div></div>
+    <div class="chart-card"><h3 data-th="ขนาดองค์กร" data-en="Company Size"></h3><div class="ch-wrap"><canvas id="ch-sz"></canvas></div></div>
+  </div>
+
+  <div class="rtbl-wrap">
+    <div class="rtbl-title" data-th="รายการผู้ตอบทั้งหมด" data-en="All Responses"></div>
+    <div style="overflow-x:auto">
+      <table class="rtbl">
+        <thead><tr>
+          <th>#</th>
+          <th data-th="ภาษา" data-en="Lang"></th>
+          <th data-th="เวลา" data-en="Time"></th>
+          <th data-th="ตำแหน่ง" data-en="Position"></th>
+          <th data-th="ประเภทองค์กร" data-en="Telecom Type"></th>
+          <th data-th="คะแนนเฉลี่ย" data-en="Mean"></th>
+        </tr></thead>
+        <tbody id="rtbl-body"><tr><td colspan="6" class="no-data" data-th="ยังไม่มีข้อมูล" data-en="No data yet."></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div><!-- /page-dash -->
+
+<!-- SUCCESS MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-ico">✅</div>
+    <h2 data-th="ขอบคุณมากค่ะ!" data-en="Thank You!"></h2>
+    <p data-th="บันทึกคำตอบของท่านเรียบร้อยแล้ว ขอบคุณสำหรับการมีส่วนร่วมในงานวิจัยนี้ ข้อมูลของท่านมีคุณค่าอย่างยิ่งต่อการพัฒนานโยบาย AI ในภาคโทรคมนาคมของประเทศไทย"
+       data-en="Your response has been recorded. Thank you for participating in this research. Your input is invaluable for developing AI policy in Thailand's telecom sector."></p>
+    <div id="send-status" style="font-size:12px;padding:8px 14px;border-radius:8px;margin-bottom:16px;display:none"></div>
+    <button class="btn-modal" onclick="closeModal()" data-th="ปิด" data-en="Close">ปิด</button>
+  </div>
+</div>
+
+<script>
+// ══ QUESTION DATA (Col G = EN, Col J = TH from Questionaire_IRB.xlsx) ══
+var SECTIONS=[
+  {key:'AICW',num:'1',en:'AI-in-Cloud Awareness',th:'ความตระหนักรู้เกี่ยวกับ AI-in-Cloud',code:'AICW — AI-in-Cloud Awareness',items:[
+    {id:'AICW1',en:'Our organization is aware of AI-in-Cloud technologies available in the market.',th:'องค์กรของเรารับรู้ถึงเทคโนโลยี AI-in-Cloud ที่มีอยู่ในตลาด'},
+    {id:'AICW2',en:'Our organization is aware of the potential benefits of adopting AI-in-Cloud technologies.',th:'องค์กรของเรารับรู้ถึงประโยชน์ที่อาจได้รับจากการนำเทคโนโลยี AI-in-Cloud มาใช้'},
+    {id:'AICW3',en:'Our organization is aware of the potential applications of AI-in-Cloud technologies for supporting and improving business operations.',th:'องค์กรของเรารับรู้ถึงการประยุกต์ใช้เทคโนโลยี AI-in-Cloud ที่สามารถสนับสนุนและยกระดับการดำเนินงานทางธุรกิจได้'},
+    {id:'AICW4',en:'Our organization recognizes the strategic importance of AI-in-Cloud technologies',th:'องค์กรของเราตระหนักถึงความสำคัญเชิงกลยุทธ์ของเทคโนโลยี AI-in-Cloud'},
+    {id:'AICW5',en:'Our organization recognizes how AI-in-Cloud technologies can be utilized in business activities.',th:'องค์กรของเรารับรู้ถึงแนวทางการประยุกต์ใช้เทคโนโลยี AI-in-Cloud ในกิจกรรมทางธุรกิจ'}
+  ]},
+  {key:'AICK',num:'2',en:'AI-in-Cloud Knowledge Capability',th:'ความสามารถด้านความรู้ AI-in-Cloud',code:'AICK — AI-in-Cloud Knowledge Capability',items:[
+    {id:'AICK1',en:'Our organization possesses the necessary AI and cloud knowledge and skills to support AI-in-Cloud adoption initiatives.',th:'องค์กรของเรามีองค์ความรู้และทักษะด้าน AI และ Cloud ที่จำเป็นต่อการสนับสนุนการนำ AI-in-Cloud มาใช้'},
+    {id:'AICK2',en:'Our organization provides continuous training and learning opportunities on the latest AI-in-Cloud technologies and practices.',th:'องค์กรของเราจัดให้มีการฝึกอบรมและโอกาสในการเรียนรู้อย่างต่อเนื่องเกี่ยวกับเทคโนโลยีและแนวทางปฏิบัติด้าน AI-in-Cloud ที่ทันสมัย'},
+    {id:'AICK3',en:'Our organization can effectively adapt its knowledge and competencies to environmental and technological changes related to AI-in-Cloud.',th:'องค์กรของเราสามารถปรับองค์ความรู้และความสามารถให้สอดคล้องกับการเปลี่ยนแปลงด้านสภาพแวดล้อมและเทคโนโลยีที่เกี่ยวข้องกับ AI-in-Cloud ได้อย่างมีประสิทธิภาพ'},
+    {id:'AICK4',en:'Our organization has access to specialized expertise in AI-in-Cloud technologies and their practical application.',th:'องค์กรของเราสามารถเข้าถึงผู้เชี่ยวชาญที่มีความเชี่ยวชาญเฉพาะด้านในเทคโนโลยี AI-in-Cloud และการประยุกต์ใช้เทคโนโลยีดังกล่าวในทางปฏิบัติ'},
+    {id:'AICK5',en:'Our organization possesses sufficient AI-in-Cloud technical capabilities and support expertise to effectively support AI initiatives.',th:'องค์กรของเรามีความสามารถทางเทคนิคและความเชี่ยวชาญด้านการสนับสนุน AI-in-Cloud เพียงพอที่จะสนับสนุนโครงการด้าน AI ได้อย่างมีประสิทธิภาพ'}
+  ]},
+  {key:'TMS',num:'3',en:'Top Management Support',th:'การสนับสนุนจากผู้บริหารระดับสูง',code:'TMS — Top Management Support',items:[
+    {id:'TMS1',en:'Top management considers AI-in-Cloud adoption as a strategic priority.',th:'ผู้บริหารระดับสูงถือว่าการนำ AI-in-Cloud มาใช้เป็นลำดับความสำคัญเชิงกลยุทธ์'},
+    {id:'TMS2',en:'Top management provides clear support and direction for AI-in-Cloud adoption.',th:'ผู้บริหารระดับสูงให้การสนับสนุนและกำหนดทิศทางที่ชัดเจนสำหรับการนำ AI-in-Cloud มาใช้'},
+    {id:'TMS3',en:'Top management is willing to allocate financial resources for AI-in-Cloud adoption.',th:'ผู้บริหารระดับสูงยินดีจัดสรรทรัพยากรทางการเงินสำหรับการนำ AI-in-Cloud มาใช้'},
+    {id:'TMS4',en:'Top management actively promotes the use of AI-in-Cloud technologies to improve organizational performance and business outcomes.',th:'ผู้บริหารระดับสูงส่งเสริมการใช้เทคโนโลยี AI-in-Cloud เพื่อยกระดับผลการดำเนินงานและผลลัพธ์ทางธุรกิจขององค์กร'},
+    {id:'TMS5',en:'Top management supports innovative AI-in-Cloud initiatives and encourages their adoption despite associated risks.',th:'ผู้บริหารระดับสูงสนับสนุนโครงการ AI-in-Cloud เชิงนวัตกรรมและส่งเสริมการนำไปใช้ แม้จะมีความเสี่ยงที่เกี่ยวข้อง'}
+  ]},
+  {key:'SA',num:'4',en:'Strategic Alignment',th:'การสอดคล้องเชิงกลยุทธ์',code:'SA — Strategic Alignment',items:[
+    {id:'SA1',en:'AI-in-Cloud adoption aligns with our organization’s strategic goals and digital transformation direction.',th:'การนำ AI-in-Cloud มาใช้สอดคล้องกับเป้าหมายเชิงกลยุทธ์และทิศทางการเปลี่ยนผ่านสู่ดิจิทัลขององค์กร'},
+    {id:'SA2',en:'AI-in-Cloud initiatives are aligned across business and IT units to support organizational goals.',th:'โครงการ AI-in-Cloud มีความสอดคล้องระหว่างหน่วยงานธุรกิจและหน่วยงาน IT เพื่อสนับสนุนเป้าหมายขององค์กร'},
+    {id:'SA3',en:'Our organization has a clear strategy to integrate AI-in-Cloud solutions with existing business and IT systems.',th:'องค์กรของเรามีกลยุทธ์ที่ชัดเจนในการผสานรวมโซลูชัน AI-in-Cloud เข้ากับระบบธุรกิจและ IT ที่มีอยู่เดิม'},
+    {id:'SA4',en:'AI-in-Cloud technologies are integrated into our organization’s business strategy.',th:'เทคโนโลยี AI-in-Cloud ถูกผนวกเข้ากับกลยุทธ์ธุรกิจขององค์กร'},
+    {id:'SA5',en:'AI-in-Cloud initiatives are aligned with organizational priorities for resource allocation and operational execution.',th:'โครงการ AI-in-Cloud มีความสอดคล้องกับลำดับความสำคัญขององค์กรด้านการจัดสรรทรัพยากรและการดำเนินงาน'}
+  ]},
+  {key:'GOV',num:'5',en:'Governance',th:'การกำกับดูแล',code:'GOV — Governance',items:[
+    {id:'GOV1',en:'AI-in-Cloud adoption in my organization is supported by governance policies addressing privacy, security, and risk management.',th:'องค์กรของเรามีกลไกการกำกับดูแลและควบคุมเพื่อติดตามการใช้งาน AI-in-Cloud'},
+    {id:'GOV2',en:'Our organization has governance and control mechanisms to monitor AI-in-Cloud usage.',th:'กรอบการกำกับดูแล AI-in-Cloud ของเรารวมถึงมาตรการความรับผิดชอบที่สอดคล้องกับข้อกำหนดขององค์กรและหน่วยงานกำกับดูแล'},
+    {id:'GOV3',en:'Our AI-in-Cloud governance framework includes accountability measures aligned with organizational and regulatory requirements.',th:'AI-in-Cloud ถูกกำกับดูแลและประสานงานตามกลยุทธ์และนโยบายขององค์กร'},
+    {id:'GOV4',en:'Our organization has clear AI governance and approval processes for AI-in-Cloud decision-making.',th:'องค์กรของเราเผชิญแรงกดดันด้านการแข่งขันในการนำเทคโนโลยี AI-in-Cloud มาใช้'},
+    {id:'GOV5',en:'AI-in-Cloud resources are governed and coordinated according to organizational strategy and policies.',th:'ทรัพยากรที่เกี่ยวข้องกับ AI-in-Cloud ได้รับการกำกับดูแลและประสานงานให้สอดคล้องกับกลยุทธ์และนโยบายขององค์กร'}
+  ]},
+  {key:'CP',num:'6',en:'Competition Pressure',th:'แรงกดดันการแข่งขัน',code:'CP — Competition Pressure',items:[
+    {id:'CP1',en:'Our organization faces competitive pressure to adopt AI-in-Cloud technologies.',th:'องค์กรของเราเผชิญแรงกดดันจากการแข่งขันให้ต้องนำ AI-in-Cloud มาใช้'},
+    {id:'CP2',en:'Rapid innovation in the industry pressures organizations to adopt AI-in-Cloud technologies.',th:'การเปลี่ยนแปลงและนวัตกรรมอย่างรวดเร็วในอุตสาหกรรมกดดันให้องค์กรต้องนำ AI-in-Cloud มาใช้'},
+    {id:'CP3',en:'Customer and market demands pressure our organization to adopt AI-in-Cloud technologies.',th:'ความต้องการของลูกค้าและตลาดกดดันให้องค์กรของเรานำ AI-in-Cloud มาใช้'},
+    {id:'CP4',en:'Failure to adopt AI-in-Cloud may weaken our competitive position.',th:'การไม่นำ AI-in-Cloud มาใช้อาจทำให้องค์กรของเราสูญเสียความได้เปรียบในการแข่งขัน'},
+    {id:'CP5',en:'Competitive market conditions pressure our organization to adopt AI-in-Cloud solutions to remain competitive.',th:'สภาพการแข่งขันในตลาดกดดันให้องค์กรของเรานำ AI-in-Cloud มาใช้เพื่อรักษาความสามารถในการแข่งขัน'}
+  ]},
+  {key:'PB',num:'7',en:'Perceived AI-in-Cloud Benefit',th:'ประโยชน์ที่รับรู้ของ AI-in-Cloud',code:'PB — Perceived AI-in-Cloud Benefit',items:[
+    {id:'PB1',en:'AI-in-Cloud systems improve operational efficiency in my organization.',th:'เทคโนโลยี AI-in-Cloud ช่วยเพิ่มประสิทธิภาพการดำเนินงานขององค์กร'},
+    {id:'PB2',en:'AI-in-Cloud technologies help reduce operational and infrastructure costs.',th:'เทคโนโลยี AI-in-Cloud ช่วยลดต้นทุนด้านการดำเนินงานและโครงสร้างพื้นฐานขององค์กร'},
+    {id:'PB3',en:'AI-in-Cloud technologies improve data-driven decision-making quality.',th:'เทคโนโลยี AI-in-Cloud ช่วยยกระดับคุณภาพของการตัดสินใจที่ขับเคลื่อนด้วยข้อมูล'},
+    {id:'PB4',en:'AI-in-Cloud adoption helps our organization achieve competitive differentiation through innovation.',th:'การนำ AI-in-Cloud มาใช้ช่วยให้องค์กรสร้างความแตกต่างทางการแข่งขันผ่านนวัตกรรม'},
+    {id:'PB5',en:'AI-in-Cloud capabilities improve our organization\'s ability to respond quickly to operational or cloud-related disruptions.',th:'ความสามารถด้าน AI-in-Cloud ช่วยเพิ่มความสามารถขององค์กรในการตอบสนองต่อเหตุการณ์หยุดชะงักในการดำเนินงานได้อย่างรวดเร็ว'}
+  ]},
+  {key:'PR',num:'8',en:'Perceived AI-in-Cloud Risk',th:'ความเสี่ยงที่รับรู้ของ AI-in-Cloud',code:'PR — Perceived AI-in-Cloud Risk',items:[
+    {id:'PR1',en:'Our organization is concerned about data security and privacy risks when using AI-in-Cloud technologies.',th:'องค์กรของเรามีความกังวลเกี่ยวกับความเสี่ยงด้านความมั่นคงปลอดภัยและความเป็นส่วนตัวของข้อมูลจากการใช้งาน AI-in-Cloud'},
+    {id:'PR2',en:'Our organization is concerned about vendor dependency and security risks associated with AI-in-Cloud services.',th:'องค์กรของเรามีความกังวลเกี่ยวกับการพึ่งพาผู้ให้บริการ รวมถึงความเสี่ยงด้านความมั่นคงปลอดภัยที่เกี่ยวข้องกับบริการ AI-in-Cloud'},
+    {id:'PR3',en:'Implementing AI-in-Cloud solutions involves significant financial and operational risks.',th:'การนำ AI-in-Cloud มาใช้เกี่ยวข้องกับความเสี่ยงด้านการลงทุนและการดำเนินงานที่สำคัญ'},
+    {id:'PR4',en:'AI-in-Cloud adoption involves technical and cybersecurity uncertainties that may affect organizational operations.',th:'การนำ AI-in-Cloud มาใช้มีความไม่แน่นอนด้านเทคนิคและความมั่นคงปลอดภัยทางไซเบอร์ที่อาจส่งผลต่อการดำเนินงานขององค์กร'},
+    {id:'PR5',en:'AI-in-Cloud technologies may disrupt existing employee roles and business processes within our organization.',th:'เทคโนโลยี AI-in-Cloud อาจส่งผลกระทบต่อบทบาทของพนักงานและกระบวนการดำเนินงานเดิมภายในองค์กร'}
+  ]},
+  {key:'TR',num:'9',en:'Trust Policy Adoption in AI-in-Cloud',th:'นโยบายความไว้วางใจใน AI-in-Cloud',code:'TR — Trust Policy Adoption',items:[
+    {id:'TR1',en:'AI-in-Cloud providers are dependable in delivering promised services.',th:'องค์กรของเราเชื่อมั่นว่าผู้ให้บริการ AI-in-Cloud สามารถส่งมอบบริการได้ตามที่สัญญาไว้'},
+    {id:'TR2',en:'Our organization trusts AI-in-Cloud providers to protect organizational data and privacy.',th:'องค์กรของเราไว้วางใจให้ผู้ให้บริการ AI-in-Cloud ปกป้องข้อมูลและความเป็นส่วนตัวขององค์กร'},
+    {id:'TR3',en:'AI-in-Cloud systems provide transparent decision-making processes.',th:'องค์กรของเราเชื่อมั่นว่า AI-in-Cloud มีความโปร่งใสในกระบวนการตัดสินใจและการประมวลผล'},
+    {id:'TR4',en:'AI-in-Cloud systems provide reliable and trustworthy outputs.',th:'องค์กรของเราเชื่อมั่นว่าระบบ AI-in-Cloud ให้ผลลัพธ์ที่น่าเชื่อถือและไว้วางใจได้'},
+    {id:'TR5',en:'Our organization trusts AI-in-Cloud systems to operate autonomously within approved organizational policies.',th:'องค์กรของเราไว้วางใจให้ระบบ AI-in-Cloud ทำงานได้อย่างอัตโนมัติภายใต้นโยบายขององค์กรที่ได้รับการอนุมัติ'}
+  ]},
+  {key:'AI',num:'10',en:'AI-in-Cloud Adoption',th:'การรับเอา AI-in-Cloud',code:'AI — AI-in-Cloud Adoption',items:[
+    {id:'AI1',en:'Our organization actively uses AI-in-Cloud technologies in daily operations.',th:'องค์กรของเรามีการใช้งานเทคโนโลยี AI-in-Cloud อย่างต่อเนื่องในการดำเนินงานประจำวัน'},
+    {id:'AI2',en:'AI-in-Cloud technologies are currently integrated across different business functions.',th:'เทคโนโลยี AI-in-Cloud ได้ถูกนำไปใช้และบูรณาการในหลายหน่วยงานขององค์กร'},
+    {id:'AI3',en:'Our organization integrates internal and external data within AI-in-Cloud platforms for business analytics.',th:'องค์กรของเรามีการบูรณาการข้อมูลภายในและภายนอกผ่านแพลตฟอร์ม AI-in-Cloud เพื่อสนับสนุนการวิเคราะห์ทางธุรกิจ'},
+    {id:'AI4',en:'Our organization has integrated AI-in-Cloud systems into multiple business and IT functions.',th:'องค์กรของเราได้บูรณาการระบบ AI-in-Cloud เข้ากับหลายกระบวนการทางธุรกิจและระบบงานด้าน IT'},
+    {id:'AI5',en:'AI-in-Cloud applications are widely adopted by employees across the organization for their daily work activities.',th:'พนักงานในองค์กรมีการนำแอปพลิเคชัน AI-in-Cloud มาใช้ในการปฏิบัติงานประจำวันอย่างแพร่หลาย'}
+  ]},
+  {key:'CDR',num:'11',en:'Cloud & Data Readiness',th:'ความพร้อมด้านคลาวด์และข้อมูล',code:'CDR — Cloud & Data Readiness',items:[
+    {id:'CDR1',en:'Our organization can reliably access AI-related data and analytics tools across work locations.',th:'องค์กรของเราสามารถเข้าถึงข้อมูลและเครื่องมือวิเคราะห์ที่เกี่ยวข้องกับ AI ได้อย่างน่าเชื่อถือจากทุกสถานที่ปฏิบัติงาน'},
+    {id:'CDR2',en:'Our organization possesses the necessary infrastructure and technical resources to support AI-in-Cloud implementation.',th:'องค์กรของเรามีโครงสร้างพื้นฐานและทรัพยากรทางเทคนิคที่จำเป็นสำหรับการนำ AI-in-Cloud มาใช้งาน'},
+    {id:'CDR3',en:'Our organization has invested in scalable data infrastructure to support AI-driven workflows.',th:'องค์กรของเราได้ลงทุนในโครงสร้างพื้นฐานด้านข้อมูลที่สามารถขยายขนาดได้ เพื่อรองรับการดำเนินงานที่ขับเคลื่อนด้วย AI'},
+    {id:'CDR4',en:'Technological resources required for AI-in-Cloud adoption are readily available within our organization.',th:'องค์กรของเรามีทรัพยากรทางเทคโนโลยีที่พร้อมใช้งานสำหรับการนำ AI-in-Cloud มาใช้'},
+    {id:'CDR5',en:'Our organization has sufficient hardware and software resources for AI-in-Cloud use.',th:'องค์กรของเรามีฮาร์ดแวร์และซอฟต์แวร์ที่เพียงพอสำหรับการใช้งาน AI-in-Cloud'}
+  ]},
+  {key:'RS',num:'12',en:'Resource Structuring',th:'การจัดโครงสร้างทรัพยากร',code:'RS — Resource Structuring',items:[
+    {id:'RS1',en:'Our organization is effective at acquiring the AI-in-Cloud resources (data, platforms, talent) it needs from external partners and suppliers.',th:'องค์กรของเรามีประสิทธิภาพในการจัดหาทรัพยากร AI บนคลาวด์ (ข้อมูล แพลตฟอร์ม และบุคลากร) ที่จำเป็นจากพันธมิตรและผู้จัดหาภายนอก'},
+    {id:'RS2',en:'Our organization effectively accumulates the technical equipment and cloud infrastructure required to support AI initiatives.',th:'องค์กรของเราสามารถสะสมอุปกรณ์ทางเทคนิคและโครงสร้างพื้นฐานคลาวด์ที่จำเป็นต่อการสนับสนุนโครงการ AI ได้อย่างมีประสิทธิภาพ'},
+    {id:'RS3',en:'Our organization makes strategic investments and divests legacy assets to build its AI-in-Cloud resource portfolio.',th:'องค์กรของเราลงทุนเชิงกลยุทธ์และเลิกใช้สินทรัพย์เดิมเพื่อสร้างคลังทรัพยากร AI บนคลาวด์'},
+    {id:'RS4',en:'Our organization effectively organizes and allocates acquired resources for AI-in-Cloud initiatives.',th:'องค์กรของเราสามารถจัดระเบียบและจัดสรรทรัพยากรที่ได้มาเพื่อสนับสนุนโครงการ AI บนคลาวด์ได้อย่างมีประสิทธิภาพ'},
+    {id:'RS5',en:'Our organization systematically develops and structures its AI-in-Cloud resource base through coordination with internal units and external technology partners.',th:'องค์กรของเราพัฒนาและจัดโครงสร้างฐานทรัพยากร AI บนคลาวด์อย่างเป็นระบบผ่านการประสานงานระหว่างหน่วยงานภายในและพันธมิตรด้านเทคโนโลยีภายนอก'}
+  ]},
+  {key:'RB',num:'13',en:'Resource Bundling',th:'การผสานรวมทรัพยากร',code:'RB — Resource Bundling',items:[
+    {id:'RB1',en:'Our organization combines its production, supply chain, and workforce resources with AI-in-Cloud systems to build new capabilities.',th:'องค์กรของเราผสานทรัพยากรด้านการผลิต ห่วงโซ่อุปทาน และบุคลากรเข้ากับระบบ AI บนคลาวด์เพื่อสร้างขีดความสามารถใหม่'},
+    {id:'RB2',en:'Our organization integrates AI-in-Cloud resources across functional areas to strengthen existing capabilities.',th:'องค์กรของเราบูรณาการทรัพยากร AI บนคลาวด์ข้ามสายงานเพื่อเสริมความแข็งแกร่งของขีดความสามารถที่มีอยู่'},
+    {id:'RB3',en:'Our organization bundles diverse resources to pioneer new AI-in-Cloud-enabled capabilities.',th:'องค์กรของเราผสานทรัพยากรที่หลากหลายเพื่อบุกเบิกขีดความสามารถใหม่ที่ขับเคลื่อนด้วย AI บนคลาวด์'},
+    {id:'RB4',en:'Our organization enriches its capabilities by combining diverse digital assets into integrated AI-in-Cloud solutions.',th:'องค์กรของเราเพิ่มพูนขีดความสามารถด้วยการผสานสินทรัพย์ดิจิทัลที่หลากหลายให้เป็นโซลูชัน AI บนคลาวด์แบบบูรณาการ'},
+    {id:'RB5',en:'Our organization aligns and bundles its IT infrastructure with AI algorithms to develop integrated AI-in-Cloud capabilities.',th:'องค์กรของเราผสานและบูรณาการโครงสร้างพื้นฐานด้าน IT เข้ากับอัลกอริทึม AI เพื่อพัฒนาขีดความสามารถ AI บนคลาวด์แบบบูรณาการ'}
+  ]},
+  {key:'RL',num:'14',en:'Resource Leveraging',th:'การใช้ประโยชน์จากทรัพยากร',code:'RL — Resource Leveraging',items:[
+    {id:'RL1',en:'Our organization mobilizes its AI-in-Cloud capabilities and coordinates them around a shared strategic vision.',th:'องค์กรของเราระดมขีดความสามารถด้าน AI บนคลาวด์และประสานให้สอดคล้องกับวิสัยทัศน์เชิงกลยุทธ์ร่วมกัน'},
+    {id:'RL2',en:'Our organization effectively deploys and coordinates its AI-in-Cloud capabilities to respond to market opportunities.',th:'องค์กรของเราสามารถนำและประสานขีดความสามารถด้าน AI บนคลาวด์ไปใช้เพื่อตอบสนองต่อโอกาสทางการตลาดได้อย่างมีประสิทธิภาพ'},
+    {id:'RL3',en:'Our organization deploys its AI-in-Cloud capabilities to exploit market opportunities and create business value.',th:'องค์กรของเรานำขีดความสามารถด้าน AI บนคลาวด์ไปใช้เพื่อคว้าโอกาสทางการตลาดและสร้างมูลค่าทางธุรกิจ'},
+    {id:'RL4',en:'Our organization mobilizes and deploys its AI-in-Cloud resources to support strategic business initiatives.',th:'องค์กรของเราระดมและนำทรัพยากร AI บนคลาวด์ไปใช้เพื่อสนับสนุนโครงการและเป้าหมายเชิงกลยุทธ์ขององค์กร'},
+    {id:'RL5',en:'Our organization leverages AI-in-Cloud predictive analytics to execute its digital strategy effectively.',th:'องค์กรของเราใช้ประโยชน์จากการวิเคราะห์เชิงพยากรณ์ของ AI บนคลาวด์เพื่อดำเนินกลยุทธ์ดิจิทัลได้อย่างมีประสิทธิภาพ'}
+  ]},
+  {key:'EXPLOR',num:'15',en:'Exploratory Innovation',th:'นวัตกรรมเชิงสำรวจ',code:'EXPLOR — Exploratory Innovation',items:[
+    {id:'EXPLOR1',en:'Our organization actively explores new knowledge and capabilities through AI-in-Cloud technologies.',th:'องค์กรของเรามุ่งแสวงหาความรู้และขีดความสามารถใหม่ผ่านเทคโนโลยี AI บนคลาวด์'},
+    {id:'EXPLOR2',en:'Our organization develops new ideas through AI-in-Cloud-enabled sensing and opportunity identification.',th:'องค์กรของเราพัฒนาแนวคิดใหม่ผ่านการรับรู้และค้นหาโอกาสด้วย AI บนคลาวด์'},
+    {id:'EXPLOR3',en:'Our organization discovers new products, services, and market opportunities through AI-in-Cloud technologies.',th:'องค์กรของเราค้นพบผลิตภัณฑ์ บริการ และโอกาสทางการตลาดใหม่ผ่าน AI บนคลาวด์'},
+    {id:'EXPLOR4',en:'Our organization pursues breakthrough innovations by leveraging AI-in-Cloud technologies.',th:'องค์กรของเราสร้างนวัตกรรมก้าวกระโดดโดยใช้เทคโนโลยี AI บนคลาวด์'},
+    {id:'EXPLOR5',en:'Our organization actively searches for and experiments with new ideas using AI-in-Cloud technologies.',th:'องค์กรของเราค้นหาและทดลองแนวคิดใหม่อย่างต่อเนื่องโดยใช้ AI บนคลาวด์'}
+  ]},
+  {key:'EXPLOI',num:'16',en:'Exploitative Innovation',th:'นวัตกรรมเชิงใช้ประโยชน์',code:'EXPLOI — Exploitative Innovation',items:[
+    {id:'EXPLOI1',en:'Our organization supports incremental improvements to existing products and services through AI-in-Cloud technologies.',th:'องค์กรของเราสนับสนุนการปรับปรุงผลิตภัณฑ์และบริการที่มีอยู่เดิมอย่างต่อเนื่องผ่านเทคโนโลยี AI บนคลาวด์'},
+    {id:'EXPLOI2',en:'Our organization continuously improves existing services through AI-in-Cloud integration.',th:'องค์กรของเราปรับปรุงบริการที่มีอยู่เดิมอย่างต่อเนื่องผ่านการบูรณาการ AI บนคลาวด์'},
+    {id:'EXPLOI3',en:'Our organization leverages AI-in-Cloud technologies to enhance and optimize existing products and services.',th:'องค์กรของเราใช้เทคโนโลยี AI บนคลาวด์เพื่อยกระดับและเพิ่มประสิทธิภาพผลิตภัณฑ์และบริการที่มีอยู่เดิม'},
+    {id:'EXPLOI4',en:'Our organization uses AI-in-Cloud technologies to improve and optimize existing business processes.',th:'องค์กรของเราใช้เทคโนโลยี AI บนคลาวด์เพื่อปรับปรุงและเพิ่มประสิทธิภาพกระบวนการดำเนินงานที่มีอยู่เดิม'},
+    {id:'EXPLOI5',en:'Our organization continuously refines and enhances existing operational processes through AI-in-Cloud technologies.',th:'องค์กรของเราปรับปรุงและพัฒนากระบวนการปฏิบัติงานที่มีอยู่เดิมอย่างต่อเนื่องผ่านเทคโนโลยี AI บนคลาวด์'}
+  ]},
+  {key:'SVC',num:'17',en:'Sustainable Value Creation',th:'การสร้างคุณค่าอย่างยั่งยืน',code:'SVC — Sustainable Value Creation',items:[
+    {id:'SVC1',en:'Our organization creates long-term value through AI-in-Cloud-enabled sustainable business practices.',th:'องค์กรของเราสร้างคุณค่าในระยะยาวผ่านแนวปฏิบัติทางธุรกิจที่ยั่งยืนด้วย AI บนคลาวด์'},
+    {id:'SVC2',en:'Investing in AI-in-Cloud enables our organization to create new value and generate additional revenue.',th:'การลงทุนใน AI บนคลาวด์ช่วยให้องค์กรของเราสร้างคุณค่าใหม่และสร้างรายได้เพิ่มเติม'},
+    {id:'SVC3',en:'Our organization continuously generates long-term value from its AI-in-Cloud investments.',th:'องค์กรของเราสร้างมูลค่าระยะยาวจากการลงทุนใน AI บนคลาวด์อย่างต่อเนื่อง'},
+    {id:'SVC4',en:'Our AI-in-Cloud capabilities enhance performance across economic, social, and environmental sustainability dimensions.',th:'ความสามารถด้าน AI บนคลาวด์ขององค์กรช่วยยกระดับผลการดำเนินงานด้านความยั่งยืนทั้งด้านเศรษฐกิจ สังคม และสิ่งแวดล้อม'},
+    {id:'SVC5',en:'AI-in-Cloud-driven collaboration contributes to sustainable organizational development.',th:'การทำงานร่วมกันที่ขับเคลื่อนด้วย AI บนคลาวด์ช่วยสนับสนุนการพัฒนาองค์กรอย่างยั่งยืน'}
+  ]}
+];
+
+var SCALE_TH=["ไม่เห็นด้วยอย่างยิ่ง","ไม่เห็นด้วย","เป็นกลาง","เห็นด้วย","เห็นด้วยอย่างยิ่ง"];
+var SCALE_EN=["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"];
+var LANG='th';
+
+/* ── ใส่ Web App URL ของคุณตรงนี้ ─────────────────────────────
+   หลัง Deploy Apps Script แล้ว copy URL มาวางแทน PASTE_HERE
+   ตัวอย่าง: 'https://script.google.com/macros/s/AKfycb.../exec'
+   ─────────────────────────────────────────────────────────── */
+var SCRIPT_URL = 'PASTE_NEW_WEB_APP_URL_HERE'; // ← วาง URL ใหม่ที่ได้จาก Deploy ครั้งใหม่
+
+var responses=JSON.parse(localStorage.getItem('aic_telecom_resp')||'[]');
+var charts={};
+
+// ── BUILD SECTIONS ──
+SECTIONS.forEach(function(sec){
+  var card=document.getElementById('sec-'+sec.key);
+  var hdr=document.createElement('div');hdr.className='sec-hdr';
+  hdr.innerHTML='<div class="sec-num">'+sec.num+'</div><div>'+
+    '<div class="sec-name" data-th="'+sec.th+'" data-en="'+sec.en+'">'+sec.th+'</div>'+
+    '<div class="sec-code">'+sec.code+'</div></div>'+
+    '<div class="sec-cnt">'+sec.items.length+' <span data-th="ข้อ" data-en="items">ข้อ</span></div>';
+  card.appendChild(hdr);
+  var body=document.createElement('div');
+  sec.items.forEach(function(q){
+    var row=document.createElement('div');row.className='q-row';row.id='row-'+q.id;
+    var scale=LANG==='th'?SCALE_TH:SCALE_EN;
+    var opts='';
+    for(var v=1;v<=5;v++){
+      opts+='<div class="lk"><input type="radio" name="'+q.id+'" id="'+q.id+'_'+v+'" value="'+v+'">'+
+        '<label for="'+q.id+'_'+v+'">'+v+'<span class="lk-desc" data-idx="'+(v-1)+'">'+scale[v-1]+'</span></label></div>';
+    }
+    var th=q.th.replace(/"/g,'&quot;'),en=q.en.replace(/"/g,'&quot;');
+    row.innerHTML='<div class="q-top"><span class="q-id">'+q.id+'</span>'+
+      '<span class="q-txt" data-th="'+th+'" data-en="'+en+'">'+q.th+'</span></div>'+
+      '<div class="lkrt-lbls"><span data-th="ไม่เห็นด้วยอย่างยิ่ง" data-en="Strongly Disagree"></span>'+
+      '<span data-th="เห็นด้วยอย่างยิ่ง" data-en="Strongly Agree"></span></div>'+
+      '<div class="lkrt">'+opts+'</div>'+
+      '<div class="err-msg" data-th="กรุณาเลือกคำตอบ" data-en="Please select a response."></div>';
+    body.appendChild(row);
+    row.querySelectorAll('input[type=radio]').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        row.classList.add('answered');row.classList.remove('error');
+        updateProg();
+      });
+    });
+  });
+  card.appendChild(body);
+});
+
+// ── POSITION OTHER FIELD ──
+function togglePosOther(){
+  var sel=document.getElementById('pos-select');
+  var inp=document.getElementById('pos-other-input');
+  if(!inp) return;
+  if(sel && sel.value==='other'){
+    inp.style.display='block';
+    inp.placeholder=LANG==='th'?'โปรดระบุตำแหน่ง...':'Please specify your position...';
+    inp.required=true;
+  } else {
+    inp.style.display='none';
+    inp.required=false;
+    inp.value='';
+  }
+}
+
+// ── LANG ──
+function setLang(l){
+  LANG=l;
+  document.querySelectorAll('.lbtn').forEach(function(b){b.classList.remove('on')});
+  document.querySelector('.lbtn[onclick="setLang(\''+l+'\')"]').classList.add('on');
+  document.documentElement.lang=l;
+  document.body.classList.toggle('lang-en', l==='en');
+  document.body.classList.toggle('lang-th', l==='th');
+  applyLang();
+  var inp=document.getElementById('pos-other-input');
+  if(inp && inp.style.display!=='none'){
+    inp.placeholder=l==='th'?'โปรดระบุตำแหน่ง...':'Please specify your position...';
+  }
+  if(document.getElementById('page-dash').classList.contains('active')) renderDash();
+}
+function tx(el){var a='data-'+LANG;if(el.hasAttribute(a))el.innerHTML=el.getAttribute(a);}
+function applyLang(){
+  document.querySelectorAll('[data-th],[data-en]').forEach(tx);
+  document.querySelectorAll('.lk-desc').forEach(function(d){
+    d.textContent=(LANG==='th'?SCALE_TH:SCALE_EN)[+d.getAttribute('data-idx')];
+  });
+  document.querySelectorAll('option[data-th]').forEach(function(o){
+    o.textContent=o.getAttribute('data-'+LANG)||o.textContent;
+  });
+}
+
+// ── PROGRESS ──
+function updateProg(){
+  var a=document.querySelectorAll('.q-row.answered').length;
+  var p=Math.round(a/85*100);
+  document.getElementById('prog-fill').style.width=p+'%';
+  document.getElementById('prog-lbl').textContent=a+' / 85';
+  document.getElementById('pmf').style.width=p+'%';
+  document.getElementById('pmtxt').textContent=a+'/85';
+}
+
+// ── CONSENT ──
+function selectConsent(choice){
+  var optAgree   = document.getElementById('opt-agree');
+  var optDecline = document.getElementById('opt-decline');
+  var declineMsg = document.getElementById('decline-msg');
+  var btn        = document.getElementById('btn-start');
+  var radioAgree = document.getElementById('radio-agree');
+  var radioDec   = document.getElementById('radio-decline');
+
+  optAgree.classList.remove('selected-agree','selected-decline');
+  optDecline.classList.remove('selected-agree','selected-decline');
+  declineMsg.classList.remove('show');
+  btn.classList.remove('ready');
+
+  if(choice==='agree'){
+    optAgree.classList.add('selected-agree');
+    radioAgree.checked=true;
+    btn.classList.add('ready');
+    btn.setAttribute('data-th','เริ่มทำแบบสอบถาม →');
+    btn.setAttribute('data-en','Start Questionnaire →');
+    applyLang();
+  } else {
+    optDecline.classList.add('selected-decline');
+    radioDec.checked=true;
+    declineMsg.classList.add('show');
+    applyLang();
+  }
+}
+function checkConsent(){} /* kept for compatibility */
+function startForm(){
+  goTab('form');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── TABS ──
+function goTab(t){
+  ['consent','form','dash'].forEach(function(p){
+    document.getElementById('page-'+p).classList.remove('active');
+    document.getElementById('t-'+p).classList.remove('on');
+  });
+  document.getElementById('page-'+t).classList.add('active');
+  document.getElementById('t-'+t).classList.add('on');
+  document.getElementById('prog-mini').style.display=(t==='form')?'flex':'none';
+  if(t==='dash')renderDash();
+  applyLang();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── SUBMIT ──
+document.getElementById('mainForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var valid=true,first=null;
+  document.querySelectorAll('.q-row').forEach(function(row){
+    var inp=row.querySelector('input[type=radio]');if(!inp)return;
+    if(!row.querySelector('input:checked')){
+      row.classList.add('error');row.classList.remove('answered');
+      valid=false;if(!first)first=row;
+    }else row.classList.remove('error');
+  });
+  if(!valid){first.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  var rec={lang:LANG,ts:new Date().toLocaleString('th-TH'),demo:{},resp:{}};
+  new FormData(this).forEach(function(v,k){
+    if(['gender','age','education','experience','position','position_other','company_size','telecom_type'].includes(k))
+      rec.demo[k]=v;
+    else rec.resp[k]=+v;
+  });
+  var vals=Object.values(rec.resp);
+  rec.mean=(vals.reduce(function(a,b){return a+b;},0)/vals.length).toFixed(2);
+
+  /* ── Show sending state ── */
+  var subBtn=document.querySelector('.btn-sub');
+  var origTxt=subBtn.textContent;
+  subBtn.textContent=LANG==='th'?'กำลังส่ง...':'Sending...';
+  subBtn.disabled=true;
+
+  /* ── Save locally first ── */
+  responses.push(rec);
+  localStorage.setItem('aic_telecom_resp',JSON.stringify(responses));
+
+  /* ── Send to Google Sheets backend ── */
+  function showSendStatus(ok){
+    var el=document.getElementById('send-status');
+    if(!el)return;
+    if(ok){
+      el.style.background='#e8f7ef';el.style.color='#16724a';
+      el.textContent=LANG==='th'?'✅ ส่งข้อมูลไป Google Sheets สำเร็จ':'✅ Sent to Google Sheets successfully';
+    } else {
+      el.style.background='#fdf3dc';el.style.color='#b8861a';
+      el.textContent=LANG==='th'?'⚠ บันทึกในเครื่องแล้ว (กรุณาตรวจสอบ internet)':'⚠ Saved locally (check internet connection)';
+    }
+    el.style.display='block';
+  }
+  function afterSend(ok){
+    subBtn.textContent=origTxt;
+    subBtn.disabled=false;
+    document.getElementById('mainForm').reset();
+    document.querySelectorAll('.q-row').forEach(function(r){r.classList.remove('answered','error');});
+    updateProg();
+    showSendStatus(ok);
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  if(SCRIPT_URL && SCRIPT_URL!=='PASTE_YOUR_WEB_APP_URL_HERE'){
+    fetch(SCRIPT_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(rec)
+    }).then(function(){
+      afterSend(true);
+    }).catch(function(err){
+      console.warn('Backend send failed (data saved locally):', err);
+      afterSend(false);
+    });
+  } else {
+    console.warn('SCRIPT_URL not set — data saved locally only.');
+    afterSend(false);
+  }
+});
+function closeModal(){
+  document.getElementById('overlay').classList.remove('show');
+  goTab('dash');
+}
+
+// ── CONNECTION BANNER ──
+function renderConnBanner(){
+  var el=document.getElementById('conn-banner');
+  if(!el)return;
+  var configured=(SCRIPT_URL && SCRIPT_URL!=='PASTE_YOUR_WEB_APP_URL_HERE');
+  if(configured){
+    el.style.background='#e8f7ef';el.style.border='1px solid #a8dfc0';el.style.color='#16724a';
+    el.innerHTML='<span>🟢 <strong>'+(LANG==='th'?'เชื่อมต่อ Google Sheets แล้ว':'Connected to Google Sheets')+'</strong> — '+(LANG==='th'?'ข้อมูลจะส่งอัตโนมัติเมื่อผู้ตอบกด Submit':'Responses are sent automatically on Submit')+'</span>';
+  } else {
+    el.style.background='#fdf3dc';el.style.border='1px solid #f0d080';el.style.color='#7a5500';
+    el.innerHTML='<span>⚠ <strong>'+(LANG==='th'?'ยังไม่ได้ตั้งค่า Backend':'Backend not configured')+'</strong> — '+(LANG==='th'?'ข้อมูลเก็บในเครื่องผู้ตอบเท่านั้น ใส่ SCRIPT_URL เพื่อส่งไป Google Sheets':'Data stored locally only. Set SCRIPT_URL to enable Google Sheets sync')+'</span>'+
+    '<a href="https://script.google.com" target="_blank" style="color:#1d5fa8;font-size:12px;white-space:nowrap">'+(LANG==='th'?'เปิด Apps Script →':'Open Apps Script →')+'</a>';
+  }
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  renderConnBanner();
+  var tot=responses.length;
+  var thC=responses.filter(function(r){return r.lang==='th';}).length;
+  document.getElementById('d-total').textContent=tot;
+  document.getElementById('d-th').textContent=thC;
+  document.getElementById('d-en').textContent=tot-thC;
+  if(!tot){document.getElementById('d-avg').textContent='—';renderTable();return;}
+  var ms=responses.map(function(r){return+r.mean;});
+  document.getElementById('d-avg').textContent=(ms.reduce(function(a,b){return a+b;},0)/ms.length).toFixed(2);
+  buildConstructChart();
+  buildDonut('ch-pos','position',{c_level:'C-Level',vp_svp:'VP/SVP',director:'Director',dept_head:'Dept Head',senior_mgr:'Sr Manager',manager:'Manager',team_lead:'Team Lead',specialist:'Specialist',consultant:'Consultant',other:'Other'});
+  buildDonut('ch-tel','telecom_type',{mobile:'Mobile(MNO)',fixed:'Fixed/ISP',satellite:'Satellite',infra:'Infrastructure',cloud:'Cloud/DC',other:'Other'});
+  buildDonut('ch-age','age',{u30:'<30','30-39':'30-39','40-49':'40-49','50-59':'50-59','60+':'60+'});
+  buildDonut('ch-sz','company_size',{'lt50':'<50','50-199':'50-199','200-999':'200-999','1000-4999':'1000-4999','5000+':'5000+'});
+  renderTable();
+}
+function buildConstructChart(){
+  var labels=[],vals=[],colors=[];
+  SECTIONS.forEach(function(sec){
+    var ids=sec.items.map(function(i){return i.id;});
+    var all=[];
+    responses.forEach(function(r){ids.forEach(function(id){if(r.resp[id])all.push(r.resp[id]);});});
+    var avg=all.length?(all.reduce(function(a,b){return a+b;},0)/all.length):0;
+    labels.push(sec.key);vals.push(+avg.toFixed(2));
+    colors.push(avg>=4?'#16724a':avg>=3?'#1d5fa8':'#b8861a');
+  });
+  if(charts['con'])charts['con'].destroy();
+  charts['con']=new Chart(document.getElementById('ch-construct').getContext('2d'),{
+    type:'bar',data:{labels:labels,datasets:[{data:vals,backgroundColor:colors,borderRadius:5,borderSkipped:false}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{min:1,max:5,ticks:{stepSize:1}},y:{ticks:{font:{size:11}}}},maintainAspectRatio:false}
+  });
+}
+function buildDonut(id,field,lmap){
+  var counts={};
+  responses.forEach(function(r){var v=r.demo[field]||'—';counts[v]=(counts[v]||0)+1;});
+  var pal=['#1d5fa8','#16724a','#b8861a','#3b9ede','#6b7a92','#c0392b','#0b1929','#3a7ca5'];
+  var labels=Object.keys(counts).map(function(k){return lmap[k]||k;});
+  if(charts[id])charts[id].destroy();
+  if(!document.getElementById(id))return;
+  charts[id]=new Chart(document.getElementById(id).getContext('2d'),{
+    type:'doughnut',
+    data:{labels:labels,datasets:[{data:Object.values(counts),backgroundColor:pal.slice(0,labels.length),borderWidth:2,borderColor:'#fff'}]},
+    options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:11}}},maintainAspectRatio:false}
+  });
+}
+function renderTable(){
+  var tb=document.getElementById('rtbl-body');tb.innerHTML='';
+  if(!responses.length){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td colspan="6" class="no-data" data-th="ยังไม่มีข้อมูล กรุณากรอกแบบสอบถาม" data-en="No data yet. Please complete the questionnaire."></td>';
+    tb.appendChild(tr);applyLang();return;
+  }
+  responses.forEach(function(r,i){
+    var tr=document.createElement('tr');
+    var bdg=r.lang==='th'?'<span class="badge badge-th">ไทย</span>':'<span class="badge badge-en">EN</span>';
+    tr.innerHTML='<td>'+(i+1)+'</td><td>'+bdg+'</td><td style="font-size:11px">'+r.ts+'</td>'+
+      '<td>'+(r.demo.position||'—')+'</td><td>'+(r.demo.telecom_type||'—')+'</td>'+
+      '<td><strong>'+r.mean+'</strong></td>';
+    tb.appendChild(tr);
+  });
+}
+
+// ── EXCEL EXPORT ──
+function exportExcel(){
+  if(!responses.length){alert(LANG==='th'?'ยังไม่มีข้อมูล':'No data to export.');return;}
+  var wb=XLSX.utils.book_new();
+  var allIds=[];SECTIONS.forEach(function(s){s.items.forEach(function(q){allIds.push(q.id);});});
+  var hdr=['#','Language','Timestamp','Gender','Age','Education','Experience','Position','Position (Other)','CompanySize','TelecomType','Mean'].concat(allIds);
+  var rows=responses.map(function(r,i){
+    var d=r.demo;
+    var base=[i+1,r.lang,r.ts,d.gender||'',d.age||'',d.education||'',d.experience||'',d.position||'',d.position_other||'',d.company_size||'',d.telecom_type||'',r.mean];
+    return base.concat(allIds.map(function(id){return r.resp[id]||'';}));
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([hdr].concat(rows)),'Raw Data');
+
+  // Construct summary
+  var sh=['Construct','Name (EN)','Name (TH)','N Items','N Responses','Mean','Std Dev'];
+  var sr=SECTIONS.map(function(sec){
+    var ids=sec.items.map(function(i){return i.id;});
+    var vals=[];responses.forEach(function(r){ids.forEach(function(id){if(r.resp[id])vals.push(r.resp[id]);});});
+    var mean=vals.length?(vals.reduce(function(a,b){return a+b;},0)/vals.length).toFixed(3):'-';
+    var sd='-';
+    if(vals.length>1){var m=+mean;sd=Math.sqrt(vals.reduce(function(a,v){return a+Math.pow(v-m,2);},0)/(vals.length-1)).toFixed(3);}
+    return[sec.key,sec.en,sec.th,ids.length,vals.length,mean,sd];
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([sh].concat(sr)),'Construct Summary');
+
+  // Item summary
+  var ih=['Item ID','Section','Question (EN)','Question (TH)','N','Mean','Std Dev'];
+  var ir=[];
+  SECTIONS.forEach(function(sec){sec.items.forEach(function(q){
+    var vals=responses.map(function(r){return r.resp[q.id];}).filter(Boolean);
+    var mean=vals.length?(vals.reduce(function(a,b){return a+b;},0)/vals.length).toFixed(3):'-';
+    var sd='-';
+    if(vals.length>1){var m=+mean;sd=Math.sqrt(vals.reduce(function(a,v){return a+Math.pow(v-m,2);},0)/(vals.length-1)).toFixed(3);}
+    ir.push([q.id,sec.key,q.en,q.th,vals.length,mean,sd]);
+  });});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ih].concat(ir)),'Item Summary');
+
+  XLSX.writeFile(wb,'AIC_Telecom_Questionnaire_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+
+function clearData(){
+  var m=LANG==='th'?'ต้องการล้างข้อมูลทั้งหมดหรือไม่?':'Clear all response data?';
+  if(confirm(m)){responses=[];localStorage.removeItem('aic_telecom_resp');renderDash();}
+}
+
+// init
+applyLang();
+updateProg();
+</script>
+
+<!-- ══ OWNER LOGIN MODAL ══ -->
+<div class="owner-login-overlay" id="ownerOverlay">
+  <div class="owner-modal">
+    <div style="font-size:36px;margin-bottom:12px">🔐</div>
+    <h3 data-th="เข้าสู่ระบบ Owner" data-en="Owner Access"></h3>
+    <p data-th="กรุณาใส่รหัสผ่านเพื่อเข้าถึง Dashboard ข้อมูล" data-en="Enter the owner password to access the data dashboard."></p>
+    <input class="owner-input" type="password" id="ownerPwdInput"
+           data-th="รหัสผ่าน..." data-en="Password..."
+           placeholder="รหัสผ่าน..." maxlength="30"
+           onkeydown="if(event.key==='Enter')checkOwnerPwd()">
+    <div class="owner-err" id="ownerErr"></div>
+    <button class="btn-owner-login" onclick="checkOwnerPwd()"
+            data-th="เข้าสู่ระบบ" data-en="Login">เข้าสู่ระบบ</button>
+    <button class="btn-owner-cancel" onclick="closeOwnerLogin()"
+            data-th="ยกเลิก" data-en="Cancel">ยกเลิก</button>
+  </div>
+</div>
+
+<!-- Secret badge — triple-click to open login -->
+<button class="owner-badge" id="ownerBadge" onclick="openOwnerLogin()" title="Owner Access">
+  🔑 Owner
+</button>
+
+<script>
+/* ── OWNER AUTH ──────────────────────────────────────────────
+   เปลี่ยนรหัสผ่านได้ที่บรรทัดนี้:                           */
+var OWNER_PASSWORD = 'AIC2024@Telecom';
+/* ────────────────────────────────────────────────────────── */
+
+var isOwner = false;
+
+function openOwnerLogin(){
+  if(isOwner){ goTab('dash'); return; }
+  document.getElementById('ownerOverlay').classList.add('show');
+  document.getElementById('ownerPwdInput').value='';
+  document.getElementById('ownerErr').textContent='';
+  document.getElementById('ownerPwdInput').classList.remove('error');
+  setTimeout(function(){ document.getElementById('ownerPwdInput').focus(); }, 100);
+  applyLang();
+}
+
+function closeOwnerLogin(){
+  document.getElementById('ownerOverlay').classList.remove('show');
+}
+
+function checkOwnerPwd(){
+  var pwd = document.getElementById('ownerPwdInput').value;
+  var inp = document.getElementById('ownerPwdInput');
+  var err = document.getElementById('ownerErr');
+  if(pwd === OWNER_PASSWORD){
+    isOwner = true;
+    document.getElementById('ownerOverlay').classList.remove('show');
+    // Show dashboard tab
+    var dtab = document.getElementById('t-dash');
+    dtab.style.display = '';
+    dtab.classList.add('owner-visible');
+    // Update badge
+    var badge = document.getElementById('ownerBadge');
+    badge.classList.add('logged-in');
+    badge.textContent = '✅ Owner';
+    // Go to dashboard
+    goTab('dash');
+  } else {
+    inp.classList.add('error');
+    err.textContent = LANG==='th' ? '❌ รหัสผ่านไม่ถูกต้อง' : '❌ Incorrect password';
+    inp.value='';
+    setTimeout(function(){ inp.classList.remove('error'); }, 500);
+    inp.focus();
+  }
+}
+
+// Close overlay on bg click
+document.getElementById('ownerOverlay').addEventListener('click', function(e){
+  if(e.target === this) closeOwnerLogin();
+});
+
+// Keyboard shortcut: Ctrl+Shift+O → open owner login
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.shiftKey && e.key==='O') openOwnerLogin();
+});
+</script>
+</body>
+</html>
