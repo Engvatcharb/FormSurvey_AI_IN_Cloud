@@ -966,9 +966,12 @@ document.getElementById('mainForm').addEventListener('submit',function(e){
 });
 function closeModal(){
   document.getElementById('overlay').classList.remove('show');
-  goTab('dash');
+  if(isOwner){
+    goTab('dash');    // Owner → ไป Dashboard
+  } else {
+    goTab('consent'); // ผู้ตอบ → กลับหน้าแรก
+  }
 }
-
 // ── CONNECTION BANNER ──
 function renderConnBanner(){
   var el=document.getElementById('conn-banner');
